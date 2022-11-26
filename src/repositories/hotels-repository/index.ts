@@ -4,20 +4,20 @@ import { Ticket, TicketStatus } from "@prisma/client";
 async function findHotels() {
   return prisma.hotel.findMany();
 }
-async function findHotelsById(ticketId: number) {
-  return prisma.ticket.findFirst({
+async function findHotelWithRoomsByHotelId(hotelId: number) {
+  return prisma.hotel.findFirst({
     where: {
-      id: ticketId,
+      id: hotelId,
     },
     include: {
-      TicketType: true,
+      Rooms: true,
     }
   });
 }
 
 const hotelsRepository = {
   findHotels,
-  findHotelsById,
+  findHotelWithRoomsByHotelId,
 };
 
 export default hotelsRepository;
