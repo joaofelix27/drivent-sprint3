@@ -1,18 +1,23 @@
-import { notFoundError } from "@/errors";
+import { notFoundError, unauthorizedError } from "@/errors";
+import enrollmentRepository from "@/repositories/enrollment-repository";
 import hotelsRepository from "@/repositories/hotels-repository";
+import ticketRepository from "@/repositories/ticket-repository";
 
 async function getHotels() {
-  const tickets = await hotelsRepository.findHotels();
-
-  const ticketsWithHotels =  tickets.filter( (ticket) => {
-    if(ticket?.TicketType?.includesHotel && ticket?.status=="PAID" ) {
-      return true;
-    } });
-
-  if (!ticketsWithHotels.length) {
+  const enrollment = await enrollmentRepository.findWithAddressByUserId(1);
+  if (!enrollment) {
     throw notFoundError();
   }
-  return ticketsWithHotels;
+
+  const ticket = await ticketRepository.findTicketByEnrollmentId(enrollment.id);
+
+  if(!ticket?.TicketType?.includesHotel || ticket?.status!=="PAID" ) {
+    throw unauthorizedError();
+  }
+
+  const hotels = await hotelsRepository.findHotels();
+
+  return hotels;
 }
 
 async function getHotelsById() {

@@ -22,6 +22,9 @@ export async function getHotelsById(req: Request, res: Response) {
     if (error.name === "DuplicatedEmailError") {
       return res.status(httpStatus.CONFLICT).send(error);
     }
+    if (error.name === "UnauthorizedError") {
+      return res.status(httpStatus.UNAUTHORIZED).send(error);
+    }
     return res.status(httpStatus.BAD_REQUEST).send(error);
   }
 }
