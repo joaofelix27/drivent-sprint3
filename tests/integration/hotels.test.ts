@@ -1,11 +1,10 @@
 import app, { init } from "@/app";
-import { prisma } from "@/config";
 import faker from "@faker-js/faker";
 import { TicketStatus } from "@prisma/client";
 import httpStatus from "http-status";
 import * as jwt from "jsonwebtoken";
 import supertest from "supertest";
-import { createEnrollmentWithAddress, createUser, createTicketType, createTicket, createRemoteWithoutHotelTicketType, createRemoteWithHotelTicketType } from "../factories";
+import { createEnrollmentWithAddress, createUser, createTicket, createRemoteWithoutHotelTicketType, createRemoteWithHotelTicketType } from "../factories";
 import { createHotel } from "../factories/hotels-factory";
 import { cleanDb, generateValidToken } from "../helpers";
 
@@ -66,7 +65,7 @@ describe("GET /hotels", () => {
       const enrollment = await createEnrollmentWithAddress(user);
       const token = await generateValidToken(user);
       const ticketType = await createRemoteWithoutHotelTicketType();
-      const ticket = await createTicket(enrollment.id, ticketType.id, TicketStatus.PAID);
+      await createTicket(enrollment.id, ticketType.id, TicketStatus.PAID);
     
       const response = await server.get("/hotels/").set("Authorization", `Bearer ${token}`);
     
@@ -78,7 +77,7 @@ describe("GET /hotels", () => {
       const enrollment = await createEnrollmentWithAddress(user);
       const token = await generateValidToken(user);
       const ticketType = await createRemoteWithHotelTicketType();
-      const ticket = await createTicket(enrollment.id, ticketType.id, TicketStatus.RESERVED);
+      await createTicket(enrollment.id, ticketType.id, TicketStatus.RESERVED);
     
       const response = await server.get("/hotels/").set("Authorization", `Bearer ${token}`);
     
@@ -90,8 +89,8 @@ describe("GET /hotels", () => {
       const enrollment = await createEnrollmentWithAddress(user);
       const token = await generateValidToken(user);
       const ticketType = await createRemoteWithHotelTicketType();
-      const ticket = await createTicket(enrollment.id, ticketType.id, TicketStatus.PAID);
-      const hotel = await createHotel();
+      await createTicket(enrollment.id, ticketType.id, TicketStatus.PAID);
+      await createHotel();
     
       const response = await server.get("/hotels/").set("Authorization", `Bearer ${token}`);
 
