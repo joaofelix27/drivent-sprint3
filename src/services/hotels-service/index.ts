@@ -16,6 +16,10 @@ async function checkIfIncludeHotelAndPayed(userId: number) {
     throw notFoundError();
   }
   const ticket = await ticketRepository.findTicketByEnrollmentId(enrollment.id);
+
+  if (!ticket) {
+    throw notFoundError();
+  }
   
   if(!ticket?.TicketType?.includesHotel || ticket?.status!=="PAID" ) {
     throw unauthorizedError();
